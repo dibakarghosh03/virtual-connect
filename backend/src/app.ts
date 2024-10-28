@@ -1,12 +1,24 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRouter from './routes/authRoute';
+import { dbConnect } from './config/db';
+dotenv.config();
+
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = process.env.PORT || 4000;
+app.use(cors());
+app.use(express.json());
+
+app.use('/auth', authRouter);
+
+dbConnect();
 
 io.on('connection', (socket) => {
     console.log('A user connected');
